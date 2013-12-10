@@ -1,0 +1,19 @@
+{
+  "name": "CyberChart",
+  "description": "jQuery-based chart",
+  "homepage": "",
+  "author": "Jasper <jasperke@kinghood.com.tw>",
+  "main": "../example/index.htm",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ]
+}

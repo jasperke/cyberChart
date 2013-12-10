@@ -1,0 +1,18 @@
+{
+  "name": "CyberChart",
+  "version": "1.0.0",
+  "authors": [
+    "Jasper Ke <jasperke@kinghood.com.tw>"
+  ],
+  "description": "jQuery-based chart",
+  "main": "../example/index.htm",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "devDependencies": {
+    "jquery": "~2.0.3"
+  }
+}
