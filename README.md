@@ -1,4 +1,4 @@
 CyberChart
 ==========
 
-jQuery-based Chart
+jQuery-based html5 canvas Chart
