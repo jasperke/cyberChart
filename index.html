@@ -37,11 +37,13 @@
 <p>jQuery based Chart</p>
 
 <pre><code>
-new CyberChart('ge_chart', [{label:'2013-12-09',value:16},{},...], {xTitle:'情緒', yTitle:'分數', type:'line'});<br>
-new CyberChart('gf_chart', [{label:'2013-12-09',value:9},{},...], {xTitle:'功能', yTitle:'分數', barWidth:0.9});
+var geData = [{label: '2013-12-09', value: 16}, {}, ...],
+	gfData = [{label: '2013-12-09', value: 9}, {}, ...];
+new CyberChart('ge_chart', geData, {xTitle:'情緒', yTitle:'分數', type:'line'});
+new CyberChart('gf_chart', gfData, {xTitle:'功能', yTitle:'分數', barWidth:0.9});
 </code></pre>
 
-<p><a href="http://jasperke.github.io/cyberChart/example/index.htm" target="_blank">範例</a></p>
+<p><a href="http://jasperke.github.io/cyberChart/example/index.htm" target="_blank">Demo</a></p>
 
 
       </section>
