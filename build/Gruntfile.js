@@ -27,7 +27,7 @@ module.exports = function(grunt) {
 		copy: {
 			dist: {
 				files: [
-					{expand:true, cwd:'<%= LIB_PATH %>jquery', src:'jquery.min.js', dest:'../'}
+					{expand:true, cwd:'<%= LIB_PATH %>jquery', src:'jquery.min.js', dest:'../example/'}
 				]
 			},
 			dev: {

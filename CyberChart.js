@@ -15,7 +15,18 @@
 			xLength: 760, // X軸長
 			yLength: 500, // Y軸長
 			yScale: [0, 5, 10, 15, 20, 25, 30], // 未特別指定者,Y軸於此刻度處畫橫線及label
-			type: 'bar' // 支援 bar, line 兩種
+			type: 'bar', // 支援 bar, line 兩種
+			barColor: 'rgba(180,180,180,0.7)', // 預設bar底色
+			canvasColor: '#ffffff',
+			brokenLineColor: 'rgba(160,160,160,0.7)', // 折線圖, 折線顏色
+			brokenLineWidth: 16,
+			dot: true, // 要不要在數值處加點
+			dotColor: '#ffffff',
+			dotStrokeWidth: 12,
+			dotStrokeColor: 'rgba(100,100,100,0.7)',
+			dotRadius: 7, // dot半徑
+			scaleLineColor: '#000000', // X,Y軸及刻度線顏色
+			fontColor: '#000000' // X,Y軸標題文字, 刻度標示數字顏色
 		};
 		$.extend(this.options, options);
 		//setTimeout($.proxy(this._prepare,this),0); /* IE使用explorercanvas, 以動態產生canvas, 同thread立即執行getContext()會有錯 */
@@ -71,16 +82,16 @@
 			this._context2d.save();
 
 			// 白色背景
-			this._context2d.fillStyle = '#ffffff';
-			this._context2d.fillRect(0, 0, this.get('width'), this.get('height'));
+			this._context2d.fillStyle = this.get('canvasColor');
+			this._context2d.fillRect(0, 0, this.get('width') + 1, this.get('height') + 1);
 
 			// 文字樣式
-			this._context2d.fillStyle = '#000000';
+			this._context2d.fillStyle = this.get('fontColor');
 			this._context2d.font = '34px sans-serif';
 
 			this._context2d.translate(190.5, 100.5); // 原點移至Y軸最高點處
 
-			this._context2d.strokeStyle = '#000000';
+			this._context2d.strokeStyle = this.get('scaleLineColor');
 			this._context2d.lineWidth = 2;
 
 			// X軸 (下面畫Y軸刻度線時會一併畫出, 所以不必畫了)
@@ -163,7 +174,7 @@
 					x = barSpace + i * xDistance;
 
 					// bar顏色
-					this._context2d.fillStyle = 'rgba(180,180,180,0.7)';
+					this._context2d.fillStyle = this.get('barColor');
 					this._context2d.lineWidth = 5;
 					this._context2d.fillRect(x, y, barWidth, data[i].value * factor);
 					this._context2d.strokeRect(x, y, barWidth, data[i].value * factor);
@@ -173,7 +184,7 @@
 				}
 
 				// time label
-				this._context2d.fillStyle = '#000000';
+				this._context2d.fillStyle = this.get('fontColor');
 				this._context2d.font = '34px sans-serif';
 				datePart = data[i].label.split('-');
 				fontDim = this._context2d.measureText(datePart[1] + '/' + datePart[2]);
@@ -185,15 +196,18 @@
 
 			if (this.get('type') == 'line' && linePos.length) { // 畫折線
 				this._drawBrokenLine(linePos);
-				this._drawDot(linePos);
+				if (this.get('dot')) {
+					this._drawDot(linePos);
+				}
 			}
 			this._context2d.restore();
 		},
 		_drawBrokenLine: function (linePos) {
 			this._context2d.save();
 
-			this._context2d.strokeStyle = 'rgba(160,160,160,0.7)';
-			this._context2d.lineWidth = 16;
+			this._context2d.strokeStyle = this.get('brokenLineColor');
+			this._context2d.lineWidth = this.get('brokenLineWidth');
+			this._context2d.lineJoin = 'round';
 
 			this._context2d.beginPath();
 			for (var i = 0; i < linePos.length; i++) {
@@ -209,13 +223,13 @@
 		_drawDot: function (linePos) {
 			this._context2d.save();
 
-			this._context2d.strokeStyle = 'rgba(100,100,100,0.7)';
-			this._context2d.lineWidth = 12;
-			this._context2d.fillStyle = '#ffffff';
+			this._context2d.strokeStyle = this.get('dotStrokeColor');
+			this._context2d.lineWidth = this.get('dotStrokeWidth');
+			this._context2d.fillStyle = this.get('dotColor');
 
 			for (var i = 0; i < linePos.length; i++) {
 				this._context2d.beginPath();
-				this._context2d.arc(linePos[i][0], linePos[i][1], 7, 0, Math.PI * 2, false);
+				this._context2d.arc(linePos[i][0], linePos[i][1], this.get('dotRadius'), 0, Math.PI * 2, false);
 				this._context2d.closePath();
 				this._context2d.stroke();
 				this._context2d.fill();
@@ -225,7 +239,7 @@
 		},
 		_drawYTitle: function () {
 			this._context2d.save();
-			this._context2d.fillStyle = '#000000';
+			this._context2d.fillStyle = this.get('fontColor');
 			this._context2d.translate(70, Math.round(this.get('yLength') / 5 * 4));
 			this._context2d.rotate(-90 * (Math.PI / 180));
 			this._context2d.font = '44px sans-serif';
@@ -234,7 +248,7 @@
 		},
 		_drawXTitle: function () {
 			this._context2d.save();
-			this._context2d.fillStyle = '#000000';
+			this._context2d.fillStyle = this.get('fontColor');
 			this._context2d.font = '44px sans-serif';
 			this._context2d.fillText(this.get('xTitle'), Math.round(this.get('width') / 7 * 3), this.get('height') - 60);
 			this._context2d.restore();
