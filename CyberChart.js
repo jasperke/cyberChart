@@ -14,6 +14,7 @@
 			yTitle: '',
 			xLength: 760, // X軸長
 			yLength: 500, // Y軸長
+			xyLineWidth: 2, // X,Y軸粗細
 			yScale: [0, 5, 10, 15, 20, 25, 30], // 未特別指定者,Y軸於此刻度處畫橫線及label
 			type: 'bar', // 支援 bar, line 兩種
 			barColor: 'rgba(180,180,180,0.7)', // 預設bar底色
@@ -26,6 +27,7 @@
 			dotStrokeColor: 'rgba(100,100,100,0.7)',
 			dotRadius: 7, // dot半徑
 			scaleLineColor: '#000000', // X,Y軸及刻度線顏色
+			scaleLineWidth: 2, // 刻度線粗細
 			fontColor: '#000000' // X,Y軸標題文字, 刻度標示數字顏色
 		};
 		$.extend(this.options, options);
@@ -92,7 +94,6 @@
 			this._context2d.translate(190.5, 100.5); // 原點移至Y軸最高點處
 
 			this._context2d.strokeStyle = this.get('scaleLineColor');
-			this._context2d.lineWidth = 2;
 
 			// X軸 (下面畫Y軸刻度線時會一併畫出, 所以不必畫了)
 			// this._context2d.moveTo(-20, 500);
@@ -108,12 +109,13 @@
 
 			// Y軸
 			this._context2d.beginPath();
+			this._context2d.lineWidth = this.get('xyLineWidth');
 			this._context2d.moveTo(0, 0);
 			this._context2d.lineTo(0, yLength + 20);
 			this._context2d.stroke();
 
 			// Y軸上刻度線
-			for (i = 0; i < yScale.length; i++) { // i=0即X軸
+			for (i = 0; i < yScale.length; i++) {
 				y = Math.round(yLength - (yScale[i] - yScale[0]) * factor);
 				this._context2d.beginPath();
 
@@ -125,6 +127,9 @@
 
 				if (i > 0) {
 					this._context2d.setLineDash([5, 5]);
+					this._context2d.lineWidth = this.get('scaleLineWidth');
+				} else { // i=0即X軸
+					this._context2d.lineWidth = this.get('xyLineWidth');
 				}
 				this._context2d.stroke();
 
