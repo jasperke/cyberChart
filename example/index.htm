@@ -37,14 +37,14 @@ canvas {border:1px solid #000000;}
 
 -->
 </style>
-<script src="../jquery.min.js"></script>
+<script src="jquery.min.js"></script>
 <script src="../CyberChart.min.js"></script>
 <script>
 var	record=[{"date":"2013-12-09","gp":19,"gs":9,"ge":16,"gf":9,"h&n":"17","pain":"2","hn2":"2","hn1":"1"},
 {"date":"2013-12-06","gp":19,"gs":8,"ge":15,"gf":8,"h&n":"23","pain":"6","hn2":"2","hn1":"2"},
 {"date":"2013-12-05","gp":20,"gs":16,"ge":14,"gf":16,"h&n":"10","pain":"4","hn2":"1","hn1":"1"},
 {"date":"2013-12-04","gp":17,"gs":12,"ge":15,"gf":7,"h&n":"28","pain":"2","hn2":"3","hn1":"2"},
-{"date":"2013-11-28","gp":27,"gs":0,"ge":20,"gf":0,"h&n":"25","pain":"3","hn2":"3","hn1":"0"}];
+{"date":"2013-11-28","gp":27,"gs":0,"ge":20,"gf":4,"h&n":"25","pain":"3","hn2":"3","hn1":"0"}];
 
 
 $(function(){
@@ -68,14 +68,58 @@ $(function(){
 			hn1Data.push({label:record[i].date,value:record[i].hn1});
 	}
 
-	new CyberChart('handn_chart', handnData, {xTitle:'H&N', yTitle:'總分', type:'line'});
-	new CyberChart('ge_chart', geData, {xTitle:'情緒', yTitle:'分數', type:'line'});
-	new CyberChart('gf_chart', gfData, {xTitle:'功能', yTitle:'分數', barWidth:0.9});
-	new CyberChart('pain_chart', painData, {xTitle:'感到疼痛程度', yTitle:'分數', yScale:[0,2,4,6,8,10]});
-	new CyberChart('gp_chart', gpData, {xTitle:'生理', yTitle:'分數'});
-	new CyberChart('gs_chart', gsData, {xTitle:'社會/家庭', yTitle:'分數', barWidth:0.2});
-	new CyberChart('hn2_chart', hn2Data, {xTitle:'失眠程度', yTitle:'分數', yScale:[0,1,2,3]});
-	new CyberChart('hn1_chart', hn1Data, {xTitle:'疲勞', yTitle:'分數', yScale:[0,1,2,3], width:1000, height:640});
+	new CyberChart('handn_chart', handnData, {
+		xTitle:'H&N', yTitle:'總分',
+		type:'line',
+		dot:false,
+		brokenLineColor:'rgba(164, 209, 255, 0.8)',
+		brokenLineWidth:30,
+		canvasColor:'#64731E',
+		scaleLineColor:'#ffffff',
+		fontColor:'#ffffff'}
+	);
+	new CyberChart('ge_chart', geData, {
+		xTitle:'情緒', yTitle:'分數',
+		type:'line',
+		dotColor:'#E10000',
+		dotRadius:15,
+		dotStrokeColor:'#0080FF',
+		dotStrokeWidth:8,
+		scaleLineColor:'#D23711',
+		fontColor:'#2DB03E'}
+	);
+	new CyberChart('gf_chart', gfData, {
+		xTitle:'功能', yTitle:'分數',
+		barWidth:0.9,
+		canvasColor:'#FFFFD0',
+		barColor:'rgba(248, 85, 77, 0.6)'}
+	);
+	new CyberChart('pain_chart', painData, {
+		xTitle:'感到疼痛程度',
+		yTitle:'分數',
+		yScale:[0,2,4,6,8,10]}
+	);
+	new CyberChart('gp_chart', gpData, {
+		xTitle:'生理', yTitle:'分數',
+		canvasColor:'#FFD0E8',
+		barColor:'rgba(243, 222, 71, 0.8)'}
+	);
+	new CyberChart('gs_chart', gsData, {
+		xTitle:'社會/家庭', yTitle:'分數',
+		barWidth:0.2,
+		barColor:'rgba(110,210,80,0.7)'}
+	);
+	new CyberChart('hn2_chart', hn2Data, {
+		xTitle:'失眠程度', yTitle:'分數',
+		yScale:[0,1,2,3],
+		barColor:'rgba(193, 77, 210, 0.8)'}
+	);
+	new CyberChart('hn1_chart', hn1Data, {
+		xTitle:'疲勞', yTitle:'分數',
+		yScale:[0,1,2,3],
+		width:1000,
+		height:640}
+	);
 
 	if(record.length>=2&&record[0].pain!==''&&record[1].pain!==''){
 		var diff=record[0].pain-record[1].pain;
