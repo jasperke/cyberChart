@@ -10,6 +10,7 @@
 			width: 1000, // UI列印時用250x210, UI螢幕顯示用 *1.4, 此處繪製時用 *4 (畫高解析,印時才不會鋸齒)
 			height: 840,
 			barWidth: 0.6, // 柱狀圖, bar的寬度%
+			chartTitle: '', // 大標題
 			xTitle: '',
 			yTitle: '',
 			// xLength: 760, // X軸長
@@ -22,6 +23,7 @@
 			xScalePos: 'between', // X軸上刻度標線位置, cener:居中, between:相鄰兩數據間
 			type: 'bar', // 支援 bar, line 兩種
 			barColor: 'rgba(180,180,180,0.7)', // 預設bar底色
+			barLabel: 'none', // bar上不要標示數值, 'in'標在bar內, 'out'標在bar外
 			canvasColor: '#ffffff',
 			brokenLineColor: 'rgba(160,160,160,0.7)', // 折線圖, 折線顏色
 			brokenLineWidth: 16,
@@ -74,6 +76,7 @@
 			this._drawXTitle();
 			this._drawYTitle();
 			this._drawData();
+			this._drawChartTitle();
 		},
 		_setLineDashOffset: function (n) {
 			this._context2d.lineDashOffset = n;
@@ -215,6 +218,18 @@
 						x = Math.round((xDistance / 2) + (i * xDistance));
 						linePos.push([x, y]); // 先記下各點座標, 之後一次畫
 					}
+
+					this._context2d.save();
+					this._context2d.fillStyle = this.get('fontColor');
+					this._context2d.font = '36px sans-serif';
+					var w = this._context2d.measureText(data[i].value).width;
+
+					if(this.get('barLabel')=='top'){ // 標示數值在點的上方或bar的外面
+						this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y - 10);
+					}else if(this.get('barLabel')=='bottom'){ // 標示數值在點的下方或bar的裏面
+						this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y + 40);
+					}
+					this._context2d.restore();
 				} else {
 					if (this.get('type') == 'line' && !this.get('alwaysLine')) { // 畫折線時, 指定遇缺值, 前後2點不必連貫者
 						linePos.push(null);
@@ -324,6 +339,17 @@
 				margin = this.get('margin');
 
 			this._context2d.fillText(this.get('xTitle'), Math.round(margin[3] + (this.get('xLength') - w) / 2), this.get('height') - 60);
+			this._context2d.restore();
+		},
+		_drawChartTitle: function () {
+			this._context2d.save();
+			this._context2d.fillStyle = this.get('fontColor');
+			this._context2d.font = '48px sans-serif';
+			var chartTitle = this.get('chartTitle'),
+				w = this._context2d.measureText(chartTitle).width,
+				margin = this.get('margin');
+
+			this._context2d.fillText(chartTitle, Math.round((this.get('width') - w) / 2), margin[0]/2);
 			this._context2d.restore();
 		}
 	};
