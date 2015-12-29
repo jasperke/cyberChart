@@ -224,10 +224,14 @@
 					this._context2d.font = '36px sans-serif';
 					var w = this._context2d.measureText(data[i].value).width;
 
-					if(this.get('barLabel')=='top'){ // 標示數值在點的上方或bar的外面
-						this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y - 10);
-					}else if(this.get('barLabel')=='bottom'){ // 標示數值在點的下方或bar的裏面
-						this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y + 40);
+					if (this.get('type') == 'bar') {
+						if(this.get('barLabel')=='top'){ // 標示數值在點的上方或bar的外面
+							this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y - 10);
+						}else if(this.get('barLabel')=='bottom'){ // 標示數值在點的下方或bar的裏面
+							this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y + 40);
+						}
+					} else if (this.get('type') == 'line') {
+						this._context2d.fillText(data[i].value, x + 10, y - 10);
 					}
 					this._context2d.restore();
 				} else {
