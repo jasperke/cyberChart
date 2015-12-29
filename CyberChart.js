@@ -36,7 +36,8 @@
 			scaleLineColor: '#000000', // X,Y軸及刻度線顏色
 			scaleLineWidth: 2, // 刻度線粗細
 			xLabel: function(label){return [label];}, // 可自訂X軸刻度標示function, 回傳array, 可依array長度標示多行
-			fontColor: '#000000' // X,Y軸標題文字, 刻度標示數字顏色
+			fontColor: '#000000', // X,Y軸標題文字, 刻度標示數字顏色
+			verticalLine: []	// 傳入欲於圖上何處標上水平線, ex.[52,77]表示於y軸52及72位置拉出一水平線, 顏色暫固定用紅色
 		};
 		this.yScaleLabelMaxWidth = 0; // 記Y軸刻度標示數字最大寬度(計算Y軸標題位置需要)
 		this.xScaleLabelMaxHeight = 0; // 記X軸刻度標示最大高度(計算X軸標題位置需要)
@@ -76,6 +77,7 @@
 			this._drawXTitle();
 			this._drawYTitle();
 			this._drawData();
+			this._drawVerticalLine();
 			this._drawChartTitle();
 		},
 		_setLineDashOffset: function (n) {
@@ -298,6 +300,33 @@
 			}
 			this._context2d.stroke();
 
+			this._context2d.restore();
+		},
+		_drawVerticalLine: function () {
+			var pos = this.get('verticalLine'),
+				xLength = this.get('xLength'),
+				yLength = this.get('yLength'),
+				yScale = this.get('yScale'),
+				margin = this.get('margin'),
+				factor = yLength / (yScale[yScale.length - 1] - yScale[0]);
+
+			if (pos.length === 0) {
+				return;
+			}
+
+			this._context2d.save();
+
+			this._context2d.translate(margin[3] + 0.5, margin[0] + 0.5); // 原點移至Y軸最高點處
+			this._context2d.strokeStyle = '#ff0000'; //this.get('brokenLineColor');
+			this._context2d.lineWidth = 4; //this.get('brokenLineWidth');
+
+			for (var i = 0; i < pos.length; i++){
+				pos[i]=Math.round(yLength - (pos[i] - yScale[0]) * factor);
+				this._context2d.beginPath();
+				this._context2d.moveTo(0, pos[i]);
+				this._context2d.lineTo(xLength, pos[i]);
+				this._context2d.stroke();
+			}
 			this._context2d.restore();
 		},
 		_drawDot: function (linePos) {
