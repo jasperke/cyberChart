@@ -229,11 +229,20 @@
 					if (this.get('type') == 'bar') {
 						if(this.get('barLabel')=='top'){ // 標示數值在點的上方或bar的外面
 							this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y - 10);
+							if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
+								this._context2d.fillText(('***').substr(0, data[i].star), x + (barWidth - w) / 2 + w + 4, y - 10 - 2);
+							}
 						}else if(this.get('barLabel')=='bottom'){ // 標示數值在點的下方或bar的裏面
 							this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y + 40);
+							if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
+								this._context2d.fillText(('***').substr(0, data[i].star), x + (barWidth - w) / 2 + w + 4, y + 40 - 2);
+							}
 						}
 					} else if (this.get('type') == 'line') {
 						this._context2d.fillText(data[i].value, x + 10, y - 10);
+						if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
+							this._context2d.fillText(('***').substr(0, data[i].star), x + 10 + w + 4, y - 10 - 2);
+						}
 					}
 					this._context2d.restore();
 				} else {
@@ -348,7 +357,7 @@
 
 			this._context2d.restore();
 		},
-		_drawYTitle: function () {
+		_drawYTitle: function () { // Y軸標題
 			this._context2d.save();
 			this._context2d.fillStyle = this.get('fontColor');
 			this._context2d.font = '44px sans-serif';
@@ -364,7 +373,7 @@
 			this._context2d.fillText(this.get('yTitle'), 0, 0);
 			this._context2d.restore();
 		},
-		_drawXTitle: function () {
+		_drawXTitle: function () { // X軸標題
 			this._context2d.save();
 			this._context2d.fillStyle = this.get('fontColor');
 			this._context2d.font = '44px sans-serif';
@@ -374,7 +383,7 @@
 			this._context2d.fillText(this.get('xTitle'), Math.round(margin[3] + (this.get('xLength') - w) / 2), this.get('height') - 60);
 			this._context2d.restore();
 		},
-		_drawChartTitle: function () {
+		_drawChartTitle: function () { // 圖上方放大標題(左右對中)
 			this._context2d.save();
 			this._context2d.fillStyle = this.get('fontColor');
 			this._context2d.font = '48px sans-serif';
