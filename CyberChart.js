@@ -214,8 +214,20 @@
 						// bar顏色
 						this._context2d.fillStyle = this.get('barColor');
 						this._context2d.lineWidth = 5;
-						this._context2d.fillRect(x, y, barWidth, data[i].value * factor);
-						this._context2d.strokeRect(x, y, barWidth, data[i].value * factor);
+
+						if(data[i].value == 'no comment'){ // 長庚護研所, 選"無法回答", 非數值無法畫bar, 但須秀文字
+							this._context2d.save();
+							this._context2d.font = '38px sans-serif';
+							this._context2d.textAlign = 'center';
+							this._context2d.textBaseline = 'bottom';
+							this._context2d.fillStyle = '#ff0000';
+							this._context2d.fillText("無法回答", xDistance / 2 + i * xDistance, yLength - 5);
+							this._context2d.restore();
+						}else{
+							this._context2d.fillRect(x, y, barWidth, data[i].value * factor);
+							this._context2d.strokeRect(x, y, barWidth, data[i].value * factor);
+						}
+
 					} else if (this.get('type') == 'line') {
 						x = Math.round((xDistance / 2) + (i * xDistance));
 						linePos.push([x, y]); // 先記下各點座標, 之後一次畫
