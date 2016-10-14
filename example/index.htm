@@ -41,10 +41,10 @@ canvas {border:1px solid #000000;}
 <script src="../CyberChart.min.js"></script>
 <script>
 var	record=[{"date":"2013-12-09","gp":19,"gs":9,"ge":16,"gf":9,"h&n":"17","pain":"2","hn2":"2","hn1":"1"},
-{"date":"2013-12-06","gp":19,"gs":8,"ge":15,"gf":8,"h&n":"23","pain":"6","hn2":"2","hn1":"2"},
-{"date":"2013-12-05","gp":20,"gs":16,"ge":14,"gf":16,"h&n":"10","pain":"4","hn2":"1","hn1":"1"},
+{"date":"2013-12-06","gp":19,"gs":8,"ge":15,"gf":8,"h&n":"23","pain":"6","hn2":"2"}, // ,"hn1":"2"
+{"date":"2013-12-05","gp":20,"gs":16,"ge":14,"gf":16,"h&n":"10","pain":"4","hn2":"1"}, // ,"hn1":"1"
 {"date":"2013-12-04","gp":17,"gs":12,"ge":15,"gf":7,"h&n":"28","pain":"2","hn2":"3","hn1":"2"},
-{"date":"2013-11-28","gp":27,"gs":0,"ge":20,"gf":4,"h&n":"25","pain":"3","hn2":"3","hn1":"0"}];
+{"date":"2013-11-28","gp":27,"gs":0,"ge":20,"gf":4,"h&n":"25","pain":"3","hn2":"3"}]; //,"hn1":"0"
 
 function xLabel(label){
 	var t=label.split('-'),
@@ -72,7 +72,9 @@ $(function(){
 			gpData.push({label:record[i].date,value:record[i].gp});
 			gsData.push({label:record[i].date,value:record[i].gs});
 			hn2Data.push({label:record[i].date,value:record[i].hn2});
-			hn1Data.push({label:record[i].date,value:record[i].hn1});
+			if(record[i].hn1){
+				hn1Data.push({label:record[i].date,value:record[i].hn1});
+			}
 	}
 
 	// ge 多加幾個data
@@ -146,6 +148,7 @@ $(function(){
 		yScale:[0,1,2,3],
 		width:1000,
 		height:640,
+		xMinSegment:3,
 		xLabel:xLabel}
 	);
 

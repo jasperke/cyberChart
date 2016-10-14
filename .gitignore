@@ -1,3 +1,4 @@
 build/node_modules/
 build/bower_components/
 example/*.min.js
+CyberChart.min.js
