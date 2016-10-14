@@ -21,6 +21,7 @@
 			yScaleSize: 20, // Y軸上刻度標線凸出長度
 			xScaleSize: 10, // X軸上刻度標線凸出長度
 			xScalePos: 'between', // X軸上刻度標線位置, cener:居中, between:相鄰兩數據間
+			xMinSegment: 5, // X軸最少項數(ex.5, 表示最少會有5個刻度, 即使data沒那麼多組)
 			type: 'bar', // 支援 bar, line 兩種
 			barColor: 'rgba(180,180,180,0.7)', // 預設bar底色
 			barLabel: 'none', // bar上不要標示數值, 'in'標在bar內, 'out'標在bar外
@@ -101,7 +102,7 @@
 				yLength = this.get('yLength'),
 				yScale = this.get('yScale'),
 				factor = yLength / (yScale[yScale.length - 1] - yScale[0]),
-				xDistance = Math.floor(xLength / Math.max(5, this._data.length)), // X軸刻度間距, 至少5項
+				xDistance = Math.floor(xLength / Math.max(this.get('xMinSegment'), this._data.length)), // X軸刻度間距, 至少5項
 				y,
 				i,
 				dim; // 記字的寬高用
@@ -183,7 +184,7 @@
 				factor = yLength / (yScale[yScale.length - 1] - yScale[0]),
 				i = 0,
 				j = 0,
-				xDistance = Math.floor(xLength / Math.max(5, this._data.length)), // X軸刻度間距
+				xDistance = Math.floor(xLength / Math.max(this.get('xMinSegment'), this._data.length)), // X軸刻度間距
 				barWidth = this.get('barWidth') * xDistance, //    Math.round(xDistance / 4 * 2),
 				barSpace = (1 - this.get('barWidth')) / 2 * xDistance, // Math.round(xDistance / 4 * 1),
 				x, y,
