@@ -83,6 +83,15 @@ $(function(){
 	geData.push({label:'2013-12-17',value:"17"});
 	geData.push({label:'2013-12-21',value:"5"});
 
+	gfData.push({label:'2014-02-03',value:"1"});
+	gfData.push({label:'2014-05-03',value:"2"});
+	gfData.push({label:'2014-07-03',value:'3'});
+	gfData.push({label:'2014-12-03',value:'4'});
+	gfData.push({label:'2015-01-03',value:'5'});
+	gfData.push({label:'2015-03-30',value:'6'});
+	// gfData.push({label:'2015-04-30',value:'7'});
+	// gfData.push({label:'2015-05-30',value:'8'});
+
 	new CyberChart('handn_chart', handnData, {
 		xTitle:'H&N', yTitle:'總計得分指數',
 		xyLineWidth: 8,
@@ -117,7 +126,9 @@ $(function(){
 		barWidth:0.9,
 		canvasColor:'#FFFFD0',
 		barColor:'rgba(248, 85, 77, 0.6)',
-		xLabel:xLabel}
+		margin: [100, 50, 300, 190],
+		xLabelRotateDegree:-60
+		} // xLabel:xLabel
 	);
 	new CyberChart('pain_chart', painData, {
 		xTitle:'感到疼痛程度',

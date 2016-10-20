@@ -37,6 +37,7 @@
 			scaleLineColor: '#000000', // X,Y軸及刻度線顏色
 			scaleLineWidth: 2, // 刻度線粗細
 			xLabel: function(label){return [label];}, // 可自訂X軸刻度標示function, 回傳array, 可依array長度標示多行
+			xLabelRotateDegree: 0,
 			fontColor: '#000000', // X,Y軸標題文字, 刻度標示數字顏色
 			verticalLine: []	// 傳入欲於圖上何處標上水平線, ex.[52,77]表示於y軸52及72位置拉出一水平線, 顏色暫固定用紅色
 		};
@@ -180,6 +181,7 @@
 				yLength = this.get('yLength'),
 				yScale = this.get('yScale'),
 				margin = this.get('margin'),
+				xLabelRotateDegree = this.get('xLabelRotateDegree'),
 				data = this._data, // [{label:'2013-12-12',value:20},{},...]
 				factor = yLength / (yScale[yScale.length - 1] - yScale[0]),
 				i = 0,
@@ -277,19 +279,28 @@
 				// fontDim = this._context2d.measureText(datePart[0]);
 				// this._context2d.fillText(datePart[0], Math.round(i * xDistance + (xDistance - fontDim.width) / 2), yLength + 100);
 
-				for (j = 0; j < xLabel.length; j++) {
-					fontDim = this._context2d.measureText(xLabel[j]);
-					x = Math.round(i * xDistance + (xDistance - fontDim.width) / 2);
-					// 刻度線與文字間距10, 刻度往下凸出this.get('xScaleSize')
-					// 各行高度this._context2d.measureText('H').width * (j + 1)
-					// 各行間距10 => (j * 10)
-					y = yLength + this.get('xScaleSize') + 10 + this._context2d.measureText('H').width * (j + 1) + (j * 10);
-					this._context2d.fillText(xLabel[j], x, y);
+				if (xLabelRotateDegree === 0) { // x軸刻度標示不旋轉
+					for (j = 0; j < xLabel.length; j++) { // 支援多行的標示
+						fontDim = this._context2d.measureText(xLabel[j]);
+						x = Math.round(i * xDistance + (xDistance - fontDim.width) / 2);
+						// 刻度線與文字間距10, 刻度往下凸出this.get('xScaleSize')
+						// 各行高度this._context2d.measureText('H').width * (j + 1)
+						// 各行間距10 => (j * 10)
+						y = yLength + this.get('xScaleSize') + 10 + this._context2d.measureText('H').width * (j + 1) + (j * 10);
 
+						this._context2d.fillText(xLabel[j], x, y);
+					}
+				} else { // 指定x軸刻度標示旋轉角度, 不支援多行的標示
+					x = Math.round((xDistance / 2) + (i * xDistance));
+					y = yLength + this.get('xScaleSize') + 10;
 
-
-
-
+					this._context2d.save();
+					this._context2d.translate(x, y);
+					this._context2d.rotate(xLabelRotateDegree * (Math.PI / 180));
+					this._context2d.textAlign = "end";
+					this._context2d.textBaseline = "middle";
+					this._context2d.fillText(xLabel[0], 0, 0);
+					this._context2d.restore();
 				}
 			}
 
