@@ -240,6 +240,68 @@
 						linePos.push([x, y]); // 先記下各點座標, 之後一次畫
 					}
 
+				} else {
+					if (this.get('type') == 'line' && !this.get('alwaysLine')) { // 畫折線時, 指定遇缺值, 前後2點不必連貫者
+						linePos.push(null);
+					}
+				}
+
+				// time label
+				this._context2d.fillStyle = this.get('fontColor');
+				this._context2d.font = '34px sans-serif';
+
+				xLabel = this.get('xLabel')(data[i].label);
+				this.xScaleLabelMaxHeight = this._context2d.measureText('H').width * xLabel.length;
+				// datePart = data[i].label.split('-');
+				// fontDim = this._context2d.measureText(datePart[1] + '/' + datePart[2]);
+
+				// this._context2d.fillText(datePart[1] + '/' + datePart[2], Math.round(i * xDistance + (xDistance - fontDim.width) / 2), yLength + 60);
+				// fontDim = this._context2d.measureText(datePart[0]);
+				// this._context2d.fillText(datePart[0], Math.round(i * xDistance + (xDistance - fontDim.width) / 2), yLength + 100);
+
+				if (xLabelRotateDegree === 0) { // x軸刻度標示不旋轉
+					for (j = 0; j < xLabel.length; j++) { // 支援多行的標示
+						fontDim = this._context2d.measureText(xLabel[j]);
+						x = Math.round(i * xDistance + (xDistance - fontDim.width) / 2);
+						// 刻度線與文字間距10, 刻度往下凸出this.get('xScaleSize')
+						// 各行高度this._context2d.measureText('H').width * (j + 1)
+						// 各行間距10 => (j * 10)
+						y = yLength + this.get('xScaleSize') + 10 + this._context2d.measureText('H').width * (j + 1) + (j * 10);
+
+						this._context2d.fillText(xLabel[j], x, y);
+					}
+				} else { // 指定x軸刻度標示旋轉角度, 不支援多行的標示
+					x = Math.round((xDistance / 2) + (i * xDistance));
+					y = yLength + this.get('xScaleSize') + 10;
+
+					this._context2d.save();
+					this._context2d.translate(x, y);
+					this._context2d.rotate(xLabelRotateDegree * (Math.PI / 180));
+					this._context2d.textAlign = "end";
+					this._context2d.textBaseline = "middle";
+					this._context2d.fillText(xLabel[0], 0, 0);
+					this._context2d.restore();
+				}
+			}
+
+			// 畫折線
+			if (this.get('type') == 'line' && linePos.length) {
+				this._drawBrokenLine(linePos);
+				if (this.get('dot')) {
+					this._drawDot(linePos);
+				}
+			}
+
+			// 折線或bar上標數值, 在bar及折線畫完後才標, 免得數值被bar或折線遮到
+			for (i = 0; i < data.length; i++) {
+				if (data[i].value !== '') {
+					y = Math.round(yLength - (data[i].value - yScale[0]) * factor);
+					if (this.get('type') == 'bar') {
+						x = barSpace + i * xDistance;
+					} else if (this.get('type') == 'line') {
+						x = Math.round((xDistance / 2) + (i * xDistance));
+					}
+
 					this._context2d.save();
 					this._context2d.fillStyle = this.get('fontColor');
 					this._context2d.font = '36px sans-serif';
@@ -345,56 +407,9 @@
 						}
 					}
 					this._context2d.restore();
-				} else {
-					if (this.get('type') == 'line' && !this.get('alwaysLine')) { // 畫折線時, 指定遇缺值, 前後2點不必連貫者
-						linePos.push(null);
-					}
-				}
-
-				// time label
-				this._context2d.fillStyle = this.get('fontColor');
-				this._context2d.font = '34px sans-serif';
-
-				xLabel = this.get('xLabel')(data[i].label);
-				this.xScaleLabelMaxHeight = this._context2d.measureText('H').width * xLabel.length;
-				// datePart = data[i].label.split('-');
-				// fontDim = this._context2d.measureText(datePart[1] + '/' + datePart[2]);
-
-				// this._context2d.fillText(datePart[1] + '/' + datePart[2], Math.round(i * xDistance + (xDistance - fontDim.width) / 2), yLength + 60);
-				// fontDim = this._context2d.measureText(datePart[0]);
-				// this._context2d.fillText(datePart[0], Math.round(i * xDistance + (xDistance - fontDim.width) / 2), yLength + 100);
-
-				if (xLabelRotateDegree === 0) { // x軸刻度標示不旋轉
-					for (j = 0; j < xLabel.length; j++) { // 支援多行的標示
-						fontDim = this._context2d.measureText(xLabel[j]);
-						x = Math.round(i * xDistance + (xDistance - fontDim.width) / 2);
-						// 刻度線與文字間距10, 刻度往下凸出this.get('xScaleSize')
-						// 各行高度this._context2d.measureText('H').width * (j + 1)
-						// 各行間距10 => (j * 10)
-						y = yLength + this.get('xScaleSize') + 10 + this._context2d.measureText('H').width * (j + 1) + (j * 10);
-
-						this._context2d.fillText(xLabel[j], x, y);
-					}
-				} else { // 指定x軸刻度標示旋轉角度, 不支援多行的標示
-					x = Math.round((xDistance / 2) + (i * xDistance));
-					y = yLength + this.get('xScaleSize') + 10;
-
-					this._context2d.save();
-					this._context2d.translate(x, y);
-					this._context2d.rotate(xLabelRotateDegree * (Math.PI / 180));
-					this._context2d.textAlign = "end";
-					this._context2d.textBaseline = "middle";
-					this._context2d.fillText(xLabel[0], 0, 0);
-					this._context2d.restore();
 				}
 			}
 
-			if (this.get('type') == 'line' && linePos.length) { // 畫折線
-				this._drawBrokenLine(linePos);
-				if (this.get('dot')) {
-					this._drawDot(linePos);
-				}
-			}
 			this._context2d.restore();
 		},
 		_drawBrokenLine: function (linePos) {
