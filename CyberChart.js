@@ -25,6 +25,7 @@
 			type: 'bar', // 支援 bar, line 兩種
 			barColor: 'rgba(180,180,180,0.7)', // 預設bar底色
 			barLabel: 'none', // bar上不要標示數值, 'in'標在bar內, 'out'標在bar外
+			barLabelRotateDegree: 0,
 			canvasColor: '#ffffff',
 			brokenLineColor: 'rgba(160,160,160,0.7)', // 折線圖, 折線顏色
 			brokenLineWidth: 16,
@@ -193,7 +194,10 @@
 				datePart,
 				fontDim,
 				linePos = [], // 畫折線時記線的座標[[x,y],[x1,y1],...]
-				xLabel = [];
+				xLabel = [],
+				barLabelRotateDegree = this.get('barLabelRotateDegree'),
+				barLabelX,
+				barLabelY;
 
 			this._context2d.save();
 
@@ -242,21 +246,102 @@
 					var w = this._context2d.measureText(data[i].value).width;
 
 					if (this.get('type') == 'bar') {
-						if(this.get('barLabel')=='top'){ // 標示數值在點的上方或bar的外面
-							this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y - 10);
+						if (this.get('barLabel')=='top'){ // 標示數值在點的上方或bar的外面
+							if (barLabelRotateDegree === 0 || Math.abs(barLabelRotateDegree) == 180) {
+								this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y - 10);
+							} else {
+								barLabelX = x + (barWidth / 2);
+								barLabelY = y - 10;
+
+								this._context2d.save();
+								this._context2d.translate(barLabelX, barLabelY);
+								this._context2d.rotate(barLabelRotateDegree * (Math.PI / 180));
+								if(barLabelRotateDegree<0){
+									this._context2d.textAlign = "start";
+								}else{
+									this._context2d.textAlign = "end";
+								}
+								this._context2d.textBaseline = "middle";
+								this._context2d.fillText(data[i].value, 0, 0);
+								this._context2d.restore();
+							}
 							if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
 								this._context2d.fillText(('***').substr(0, data[i].star), x + (barWidth - w) / 2 + w + 4, y - 10 - 2);
 							}
-						}else if(this.get('barLabel')=='bottom'){ // 標示數值在點的下方或bar的裏面
-							this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y + 40);
+						} else if(this.get('barLabel') == 'bottom'){ // 標示數值在點的下方或bar的裏面
+							if (barLabelRotateDegree === 0 || Math.abs(barLabelRotateDegree) == 180) { // 180等沒旋轉
+								this._context2d.fillText(data[i].value, x + (barWidth - w) / 2, y + 40);
+							} else {
+								barLabelX = x + (barWidth / 2);
+								if(Math.abs(barLabelRotateDegree)==90){
+									barLabelY = y + (w / 2) + 10;
+								}else{
+									barLabelY = y + Math.sin(Math.abs(barLabelRotateDegree) * (Math.PI / 180)) * w / 2 + 10;
+								}
+
+								this._context2d.save();
+								this._context2d.translate(barLabelX, barLabelY);
+								this._context2d.rotate(barLabelRotateDegree * (Math.PI / 180));
+								this._context2d.textAlign = "center";
+								this._context2d.textBaseline = "middle";
+								this._context2d.fillText(data[i].value, 0, 0);
+								this._context2d.restore();
+							}
 							if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
 								this._context2d.fillText(('***').substr(0, data[i].star), x + (barWidth - w) / 2 + w + 4, y + 40 - 2);
 							}
 						}
 					} else if (this.get('type') == 'line') {
-						this._context2d.fillText(data[i].value, x + 10, y - 10);
-						if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
-							this._context2d.fillText(('***').substr(0, data[i].star), x + 10 + w + 4, y - 10 - 2);
+						if (this.get('barLabel')=='top'){
+							this._context2d.save();
+							if(barLabelRotateDegree === 0 || Math.abs(barLabelRotateDegree) == 180) {
+								this._context2d.translate(x, y - 10);
+								this._context2d.textAlign = "center";
+								this._context2d.textBaseline = "bottom";
+								this._context2d.fillText(data[i].value, 0, 0);
+							} else {
+								barLabelX = x;
+								barLabelY = y - 10;
+
+								this._context2d.translate(barLabelX, barLabelY);
+								this._context2d.rotate(barLabelRotateDegree * (Math.PI / 180));
+								if(barLabelRotateDegree<0){
+									this._context2d.textAlign = "start";
+								}else{
+									this._context2d.textAlign = "end";
+								}
+								this._context2d.textBaseline = "middle";
+								this._context2d.fillText(data[i].value, 0, 0);
+							}
+							this._context2d.restore();
+							if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
+								this._context2d.fillText(('***').substr(0, data[i].star), x + 10 + w + 4, y - 10 - 2);
+							}
+						} else if (this.get('barLabel')=='bottom') {
+							this._context2d.save();
+							this._context2d.textAlign = "center";
+							if(barLabelRotateDegree === 0 || Math.abs(barLabelRotateDegree) == 180) {
+								this._context2d.translate(x, y + 10);
+								this._context2d.textBaseline = "top";
+								this._context2d.fillText(data[i].value, 0, 0);
+							} else {
+								barLabelX = x;
+								if(Math.abs(barLabelRotateDegree)==90){
+									barLabelY = y + (w / 2) + 10;
+								}else{
+									barLabelY = y + Math.sin(Math.abs(barLabelRotateDegree) * (Math.PI / 180)) * w / 2 + 10;
+								}
+
+								this._context2d.translate(barLabelX, barLabelY);
+								this._context2d.rotate(barLabelRotateDegree * (Math.PI / 180));
+								this._context2d.textBaseline = "middle";
+								this._context2d.fillText(data[i].value, 0, 0);
+							}
+							this._context2d.restore();
+
+							if (data[i].star) { // 長庚護研所需求, 如果傳入資料有star屬性, 需在數值右上角標示 "*"
+								this._context2d.fillText(('***').substr(0, data[i].star), x + (barWidth - w) / 2 + w + 4, y + 40 - 2);
+							}
 						}
 					}
 					this._context2d.restore();
