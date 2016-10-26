@@ -40,7 +40,8 @@
 			xLabel: function(label){return [label];}, // 可自訂X軸刻度標示function, 回傳array, 可依array長度標示多行
 			xLabelRotateDegree: 0,
 			fontColor: '#000000', // X,Y軸標題文字, 刻度標示數字顏色
-			verticalLine: []	// 傳入欲於圖上何處標上水平線, ex.[52,77]表示於y軸52及72位置拉出一水平線, 顏色暫固定用紅色
+			verticalLine: [],	// 傳入欲於圖上何處標上水平線, ex.[52,77]表示於y軸52及72位置拉出一水平線, 顏色暫固定用紅色
+			textBlock: null // 特殊狀況: 有傳textBlock內容, 則不用data作圖, 直接將textBlock文字內容印出
 		};
 		this.yScaleLabelMaxWidth = 0; // 記Y軸刻度標示數字最大寬度(計算Y軸標題位置需要)
 		this.xScaleLabelMaxHeight = 0; // 記X軸刻度標示最大高度(計算X軸標題位置需要)
@@ -58,7 +59,9 @@
 	CyberChart.prototype = {
 		_prepare: function () {
 			var margin = this.get('margin'),
-				jCanvas;
+				jCanvas,
+				textBlock = this.get('textBlock');
+
 			this.set({xLength: this.get('width') - margin[3] - margin[1], yLength: this.get('height') - margin[0] - margin[2]});
 
 			jCanvas = $('<canvas/>').attr({width: this.get('width'), height: this.get('height')}).appendTo(this._element);
@@ -76,11 +79,30 @@
 				}, this);
 			}
 
-			this._drawBase();
-			this._drawXTitle();
-			this._drawYTitle();
-			this._drawData();
-			this._drawVerticalLine();
+
+			if(textBlock === null){
+				this._drawBase();
+				this._drawXTitle();
+				this._drawYTitle();
+				this._drawData();
+				this._drawVerticalLine();
+			}else{ // 有傳textBlock, 直接將textBlock輸出到jCanvas
+					//  預設fontSize:38, lineHeight:70, 初始位置 x:80, y:120
+				var fontSize = textBlock.fontSize || 38,
+					lineHeight = textBlock.lineHeight || 70,
+					x = textBlock.x || 80,
+					y = textBlock.y || 120,
+					content = textBlock.content; // array中每項為一行
+
+				this._context2d.save();
+				this._context2d.font = fontSize + 'px sans-serif';
+				this._context2d.textBaseline = 'top';
+				for (var i = 0; i < content.length; i++) {
+					this._context2d.fillText(content[i], x, i * lineHeight + y);
+				}
+
+				this._context2d.restore();
+			}
 			this._drawChartTitle();
 		},
 		_setLineDashOffset: function (n) {
